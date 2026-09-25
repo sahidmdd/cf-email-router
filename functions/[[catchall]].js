@@ -1,7 +1,9 @@
 // Cloudflare Pages Function — Email Handler
-// Upload folder berisi file ini ke CF Pages "Upload Assets"
+// Email Routing: catch-all → Function ini → POST ke Tempik API
 //
-// Flow: x.ai OTP email → CF MX → Email Routing → Function ini → POST ke Tempik API
+// Tempik API: https://tempik.mdstudioai.my.id
+
+const TEMPIK_URL = 'https://tempik.mdstudioai.my.id';
 
 export async function onRequestEmail(context) {
   const message = context.email;
@@ -44,7 +46,7 @@ export async function onRequestEmail(context) {
 
   // POST ke Tempik API
   try {
-    await fetch('http://134.185.86.11:8891/api/inboxes/' + encodeURIComponent(to) + '/messages', {
+    const resp = await fetch(`${TEMPIK_URL}/api/inboxes/${encodeURIComponent(to)}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -54,8 +56,10 @@ export async function onRequestEmail(context) {
         otp: otp,
       }),
     });
+    const result = await resp.text();
+    console.log(`[EMAIL-ROUTER] ${to} | OTP: ${otp} | Status: ${resp.status}`);
   } catch (e) {
-    // silent fail
+    console.error(`[EMAIL-ROUTER] Forward failed: ${e.message}`);
   }
 
   return new Response('OK', { status: 200 });
