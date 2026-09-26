@@ -3,7 +3,7 @@
 //
 // Tempik API: https://tempik.mdstudioai.my.id
 
-const TEMPIK_URL = 'https://tempik.mdstudioai.my.id';
+const TEMPIK_URL = 'https://mdstudioai.my.id/tempik-api';
 
 export async function onRequestEmail(context) {
   const message = context.email;
